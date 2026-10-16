@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#120B1E">
+<title>Sakhi — personal safety companion</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/icon-192.png">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- ============ STEALTH CALCULATOR (disguise screen) ============ -->
+<div id="stealth" class="stealth" hidden>
+  <div class="calc">
+    <div class="calc-screen">
+      <div class="calc-sub" id="calcSub"></div>
+      <div class="calc-main" id="calcMain">0</div>
+    </div>
+    <div class="calc-pad">
+      <button class="k fn" data-k="AC">AC</button>
+      <button class="k fn" data-k="+/-">+/−</button>
+      <button class="k fn" data-k="%">%</button>
+      <button class="k op" data-k="/">÷</button>
+      <button class="k" data-k="7">7</button><button class="k" data-k="8">8</button><button class="k" data-k="9">9</button>
+      <button class="k op" data-k="*">×</button>
+      <button class="k" data-k="4">4</button><button class="k" data-k="5">5</button><button class="k" data-k="6">6</button>
+      <button class="k op" data-k="-">−</button>
+      <button class="k" data-k="1">1</button><button class="k" data-k="2">2</button><button class="k" data-k="3">3</button>
+      <button class="k op" data-k="+">+</button>
+      <button class="k wide" data-k="0">0</button><button class="k" data-k=".">.</button>
+      <button class="k op" data-k="=">=</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="app" class="app">
+
+  <!-- live status strip -->
+  <header class="statusbar">
+    <div class="brand">
+      <span class="mark" aria-hidden="true"></span>
+      <span class="brandname">Sakhi</span>
+    </div>
+    <button class="fix" id="fixChip" type="button" title="Location status">
+      <span class="dot" id="fixDot"></span>
+      <span id="fixText">Getting your location…</span>
+    </button>
+    <button class="iconbtn" id="stealthBtn" type="button" title="Hide the app behind a calculator" aria-label="Hide app">
+      <svg viewBox="0 0 24 24" class="ico"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/><path d="m4 4 16 16"/></svg>
+    </button>
+  </header>
+
+  <div id="zoneWarn" class="zonewarn" hidden></div>
+
+  <div class="shell">
+    <!-- desktop rail -->
+    <nav class="rail" aria-label="Sections">
+      <a href="#/home" data-nav="home"><svg viewBox="0 0 24 24" class="ico"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg><span>Home</span></a>
+      <a href="#/walk" data-nav="walk"><svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>Safe walk</span></a>
+      <a href="#/guardians" data-nav="guardians"><svg viewBox="0 0 24 24" class="ico"><path d="M12 3 5 6v6c0 4 3 7.5 7 9 4-1.5 7-5 7-9V6l-7-3Z"/></svg><span>Guardians</span></a>
+      <a href="#/evidence" data-nav="evidence"><svg viewBox="0 0 24 24" class="ico"><rect x="4" y="7" width="16" height="12" rx="3"/><circle cx="12" cy="13" r="3"/><path d="M9 7 10.5 4.5h3L15 7"/></svg><span>Evidence</span></a>
+      <a href="#/zones" data-nav="zones"><svg viewBox="0 0 24 24" class="ico"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg><span>Zones</span></a>
+      <a href="#/help" data-nav="help"><svg viewBox="0 0 24 24" class="ico"><path d="M5 4h4l2 5-2.5 1.5a12 12 0 0 0 5 5L15 13l5 2v4a1 1 0 0 1-1.1 1A16 16 0 0 1 4 5.1 1 1 0 0 1 5 4Z"/></svg><span>Helplines</span></a>
+      <a href="#/settings" data-nav="settings"><svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg><span>Settings</span></a>
+    </nav>
+
+    <main class="content">
+
+      <!-- ==================== HOME ==================== -->
+      <section class="view" id="v-home">
+        <div class="dialwrap">
+          <div class="dialrings" id="dialRings" aria-hidden="true"><i></i><i></i><i></i></div>
+          <button class="dial" id="sosDial" type="button" aria-label="Hold for two seconds to send an emergency alert">
+            <svg class="dialprog" viewBox="0 0 120 120" aria-hidden="true">
+              <circle class="track" cx="60" cy="60" r="54"></circle>
+              <circle class="bar" id="dialBar" cx="60" cy="60" r="54"></circle>
+            </svg>
+            <span class="dial-label">SOS</span>
+            <span class="dial-hint" id="dialHint">Hold 2s</span>
+          </button>
+          <p class="dialmeta" id="dialMeta">Accuracy —</p>
+        </div>
+
+        <div class="tiles">
+          <button class="tile" data-act="share"><span class="t-ico ok">◎</span><b>Send my location</b><small>WhatsApp or SMS, right now</small></button>
+          <button class="tile" data-act="siren"><span class="t-ico warn">◉</span><b>Siren + strobe</b><small>Loud alarm, flashing screen</small></button>
+          <button class="tile" data-act="fakecall"><span class="t-ico">☏</span><b>Fake call</b><small>Ring in 10 seconds</small></button>
+          <button class="tile" data-act="record"><span class="t-ico">●</span><b>Record audio</b><small>Save proof of what's said</small></button>
+        </div>
+
+        <div class="card" id="liveCard">
+          <div class="cardhead"><h2>Where you are now</h2><button class="link" id="refreshLoc" type="button">Refresh</button></div>
+          <p class="addr" id="addrLine">Waiting for a GPS fix…</p>
+          <div class="kv">
+            <div><span>Latitude</span><b id="kLat">—</b></div>
+            <div><span>Longitude</span><b id="kLng">—</b></div>
+            <div><span>Accuracy</span><b id="kAcc">—</b></div>
+            <div><span>Updated</span><b id="kTime">—</b></div>
+          </div>
+          <div class="row">
+            <a class="btn ghost" id="mapsLink" href="#" target="_blank" rel="noopener">Open in Maps</a>
+            <button class="btn ghost" id="copyLoc" type="button">Copy location</button>
+          </div>
+          <p class="note" id="geoNote" hidden></p>
+        </div>
+
+        <div class="card sensors">
+          <div class="cardhead"><h2>Hands-free triggers</h2></div>
+          <label class="sw"><input type="checkbox" id="tgShake"><span class="track"><i></i></span>
+            <span class="lbl"><b>Shake to alert</b><small>Shake the phone hard three times</small></span></label>
+          <label class="sw"><input type="checkbox" id="tgScream"><span class="track"><i></i></span>
+            <span class="lbl"><b>Listen for a scream</b><small>Alerts if it hears sustained loud noise</small></span></label>
+          <label class="sw"><input type="checkbox" id="tgFollow"><span class="track"><i></i></span>
+            <span class="lbl"><b>Keep guardians updated</b><small>Fresh location every few minutes while an alert is live</small></span></label>
+          <div class="meter" id="micMeter" hidden><i id="micFill"></i></div>
+        </div>
+      </section>
+
+      <!-- ==================== SAFE WALK ==================== -->
+      <section class="view" id="v-walk" hidden>
+        <div class="pagehead">
+          <h1>Safe walk</h1>
+          <p>Tell Sakhi where you're headed and when you should be there. Miss the check-in and your guardians hear about it automatically.</p>
+        </div>
+
+        <div class="card" id="walkSetup">
+          <label class="field"><span>Where are you going?</span>
+            <input id="wDest" type="text" placeholder="Green Park metro, gate 2"></label>
+          <label class="field"><span>I should arrive in</span>
+            <div class="chips" id="wMins">
+              <button class="chip" data-min="10">10 min</button>
+              <button class="chip on" data-min="20">20 min</button>
+              <button class="chip" data-min="30">30 min</button>
+              <button class="chip" data-min="45">45 min</button>
+              <button class="chip" data-min="60">1 hour</button>
+            </div>
+          </label>
+          <label class="field"><span>Travelling by</span>
+            <div class="chips" id="wMode">
+              <button class="chip on" data-mode="Walking">Walking</button>
+              <button class="chip" data-mode="Auto">Auto</button>
+              <button class="chip" data-mode="Cab">Cab</button>
+              <button class="chip" data-mode="Bus / metro">Bus / metro</button>
+            </div>
+          </label>
+          <label class="field" id="cabWrap" hidden><span>Vehicle number (shared with guardians)</span>
+            <input id="wPlate" type="text" placeholder="DL 1C AB 1234"></label>
+          <button class="btn primary block" id="wStart" type="button">Start the walk</button>
+          <p class="note">Your guardians get a "journey started" message with the destination, the vehicle number and a live map link.</p>
+        </div>
+
+        <div class="card live" id="walkLive" hidden>
+          <div class="clock" id="wClock">20:00</div>
+          <p class="clocksub" id="wSub">Heading to —</p>
+          <div class="bar"><i id="wBar"></i></div>
+          <div class="row">
+            <button class="btn ok" id="wArrived" type="button">I've arrived</button>
+            <button class="btn ghost" id="wExtend" type="button">+10 min</button>
+            <button class="btn ghost danger" id="wCancel" type="button">Cancel</button>
+          </div>
+          <div class="trail">
+            <div class="kv">
+              <div><span>Distance covered</span><b id="wDist">0.00 km</b></div>
+              <div><span>Points logged</span><b id="wPts">0</b></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="cardhead"><h2>Past journeys</h2><button class="link" id="wExport" type="button">Export CSV</button></div>
+          <div id="wHistory" class="list"></div>
+        </div>
+      </section>
+
+      <!-- ==================== GUARDIANS ==================== -->
+      <section class="view" id="v-guardians" hidden>
+        <div class="pagehead">
+          <h1>Guardians</h1>
+          <p>The people who get your alerts. Save the number exactly as you'd dial it internationally — country code first, no spaces.</p>
+        </div>
+
+        <div class="card">
+          <div class="grid2">
+            <label class="field"><span>Name</span><input id="gName" type="text" placeholder="Mummy"></label>
+            <label class="field"><span>Relation</span><input id="gRel" type="text" placeholder="Mother"></label>
+          </div>
+          <div class="grid2">
+            <label class="field"><span>Country code</span><input id="gCode" type="tel" value="+91" inputmode="tel"></label>
+            <label class="field"><span>Phone number</span><input id="gPhone" type="tel" placeholder="9876543210" inputmode="numeric"></label>
+          </div>
+          <label class="sw"><input type="checkbox" id="gPrimary"><span class="track"><i></i></span>
+            <span class="lbl"><b>Alert first</b><small>This person is contacted before everyone else</small></span></label>
+          <button class="btn primary block" id="gAdd" type="button">Save guardian</button>
+        </div>
+
+        <div id="gList" class="list cards"></div>
+      </section>
+
+      <!-- ==================== EVIDENCE ==================== -->
+      <section class="view" id="v-evidence" hidden>
+        <div class="pagehead">
+          <h1>Evidence locker</h1>
+          <p>Recordings and photos stay on this device. Download the ones you need before you close the tab.</p>
+        </div>
+
+        <div class="card rec">
+          <div class="reclight" id="recLight"></div>
+          <div class="rectime" id="recTime">00:00</div>
+          <div class="row">
+            <button class="btn primary" id="recStart" type="button">Start recording</button>
+            <button class="btn ghost" id="recStop" type="button" disabled>Stop</button>
+          </div>
+          <p class="note">Audio keeps recording while you use other pages of the app.</p>
+        </div>
+
+        <div class="card">
+          <div class="cardhead"><h2>Camera</h2></div>
+          <video id="cam" playsinline muted hidden></video>
+          <canvas id="camCanvas" hidden></canvas>
+          <div class="row">
+            <button class="btn ghost" id="camOn" type="button">Open camera</button>
+            <button class="btn primary" id="camShot" type="button" disabled>Take photo</button>
+            <button class="btn ghost" id="camOff" type="button" disabled>Close</button>
+          </div>
+        </div>
+
+        <div id="evList" class="list cards"></div>
+      </section>
+
+      <!-- ==================== ZONES ==================== -->
+      <section class="view" id="v-zones" hidden>
+        <div class="pagehead">
+          <h1>Marked spots</h1>
+          <p>Pin a place that felt unsafe. Sakhi warns you when you come within 300 metres of it again.</p>
+        </div>
+
+        <div class="card">
+          <div class="chips" id="zType">
+            <button class="chip on" data-z="Poor lighting">Poor lighting</button>
+            <button class="chip" data-z="Was followed">Was followed</button>
+            <button class="chip" data-z="Harassment">Harassment</button>
+            <button class="chip" data-z="Lonely stretch">Lonely stretch</button>
+            <button class="chip" data-z="Felt safe">Felt safe</button>
+          </div>
+          <label class="field"><span>What happened? (optional)</span>
+            <input id="zNote" type="text" placeholder="Streetlights out after the bus stop"></label>
+          <button class="btn primary block" id="zAdd" type="button">Pin my current spot</button>
+        </div>
+
+        <div id="zList" class="list cards"></div>
+      </section>
+
+      <!-- ==================== HELPLINES ==================== -->
+      <section class="view" id="v-help" hidden>
+        <div class="pagehead">
+          <h1>Helplines</h1>
+          <p>These connect to real Indian emergency services. Tap to dial.</p>
+        </div>
+        <div id="helpList" class="list cards"></div>
+
+        <div class="card">
+          <div class="cardhead"><h2>Know this</h2></div>
+          <div class="facts">
+            <p><b>Zero FIR</b> — you can file an FIR at any police station, not only the one where the incident happened. They cannot refuse it.</p>
+            <p><b>Night arrest rule</b> — a woman cannot be arrested after sunset or before sunrise except with a magistrate's written permission, and only by a woman officer.</p>
+            <p><b>Free legal aid</b> — the District Legal Services Authority provides a lawyer at no cost. Call 15100.</p>
+            <p><b>Your statement</b> — you can ask to give your statement at home, in the presence of a woman officer or a relative.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== SETTINGS ==================== -->
+      <section class="view" id="v-settings" hidden>
+        <div class="pagehead">
+          <h1>Settings</h1>
+          <p>Everything is stored on this device only. Nothing is uploaded anywhere.</p>
+        </div>
+
+        <div class="card">
+          <label class="field"><span>Your name (goes into the alert)</span>
+            <input id="sName" type="text" placeholder="Anjali"></label>
+          <label class="field"><span>Alert message</span>
+            <textarea id="sMsg" rows="4"></textarea></label>
+          <p class="note">Placeholders you can use: {name} {time} {maps} {address} {accuracy} {battery}</p>
+          <label class="field"><span>Update guardians every</span>
+            <div class="chips" id="sPing">
+              <button class="chip" data-p="60">1 min</button>
+              <button class="chip on" data-p="180">3 min</button>
+              <button class="chip" data-p="300">5 min</button>
+            </div>
+          </label>
+        </div>
+
+        <div class="card">
+          <div class="cardhead"><h2>Stealth mode</h2></div>
+          <p class="note">The app hides behind a working calculator. Type your unlock code and press = to come back. Type the panic code and press = to fire a silent alert.</p>
+          <div class="grid2">
+            <label class="field"><span>Unlock code</span><input id="sUnlock" type="text" inputmode="numeric" value="1234"></label>
+            <label class="field"><span>Panic code</span><input id="sPanic" type="text" inputmode="numeric" value="911"></label>
+          </div>
+          <label class="sw"><input type="checkbox" id="sAutoStealth"><span class="track"><i></i></span>
+            <span class="lbl"><b>Open in calculator</b><small>Start hidden every time the app loads</small></span></label>
+        </div>
+
+        <div class="card">
+          <div class="cardhead"><h2>Send alerts through</h2></div>
+          <label class="sw"><input type="checkbox" id="sWA" checked><span class="track"><i></i></span>
+            <span class="lbl"><b>WhatsApp</b><small>Opens a ready-to-send chat per guardian</small></span></label>
+          <label class="sw"><input type="checkbox" id="sSMS" checked><span class="track"><i></i></span>
+            <span class="lbl"><b>SMS</b><small>Works without internet, all guardians at once</small></span></label>
+          <label class="sw"><input type="checkbox" id="sCall" checked><span class="track"><i></i></span>
+            <span class="lbl"><b>Offer a phone call</b><small>One tap to ring your first guardian</small></span></label>
+        </div>
+
+        <div class="card">
+          <div class="cardhead"><h2>Data</h2></div>
+          <div class="row">
+            <button class="btn ghost" id="dExport" type="button">Export my data</button>
+            <button class="btn ghost danger" id="dWipe" type="button">Erase everything</button>
+          </div>
+          <p class="note" id="diag"></p>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- bottom nav -->
+  <nav class="tabs" aria-label="Sections">
+    <a href="#/home" data-nav="home"><svg viewBox="0 0 24 24" class="ico"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg><span>Home</span></a>
+    <a href="#/walk" data-nav="walk"><svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>Walk</span></a>
+    <a href="#/guardians" data-nav="guardians"><svg viewBox="0 0 24 24" class="ico"><path d="M12 3 5 6v6c0 4 3 7.5 7 9 4-1.5 7-5 7-9V6l-7-3Z"/></svg><span>Guardians</span></a>
+    <a href="#/evidence" data-nav="evidence"><svg viewBox="0 0 24 24" class="ico"><rect x="4" y="7" width="16" height="12" rx="3"/><circle cx="12" cy="13" r="3"/></svg><span>Evidence</span></a>
+    <a href="#/zones" data-nav="zones"><svg viewBox="0 0 24 24" class="ico"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg><span>Zones</span></a>
+  </nav>
+</div>
+
+<!-- ============ DISPATCH SHEET ============ -->
+<div id="dispatch" class="sheet" hidden>
+  <div class="sheetbody">
+    <div class="sheethead">
+      <div>
+        <h2 id="dTitle">Alert ready</h2>
+        <p id="dSub">Tap each guardian to send. WhatsApp opens with the message already typed.</p>
+      </div>
+      <button class="iconbtn" id="dClose" type="button" aria-label="Close">✕</button>
+    </div>
+    <pre class="msgbox" id="dMsg"></pre>
+    <div class="row">
+      <button class="btn ghost" id="dCopy" type="button">Copy message</button>
+      <button class="btn ghost" id="dSMSAll" type="button">SMS everyone</button>
+      <button class="btn ghost" id="dRefresh" type="button">Refresh location</button>
+    </div>
+    <div id="dList" class="list"></div>
+    <p class="note" id="dNote"></p>
+  </div>
+</div>
+
+<!-- ============ FAKE CALL ============ -->
+<div id="fakecall" class="fakecall" hidden>
+  <div class="fc-top">
+    <p class="fc-sub">Incoming call</p>
+    <h2 class="fc-name" id="fcName">Papa</h2>
+    <p class="fc-num" id="fcNum">mobile · +91 98••• ••210</p>
+  </div>
+  <div class="fc-av" id="fcAv">P</div>
+  <div class="fc-actions">
+    <button class="fc-btn decline" id="fcDecline" type="button">Decline</button>
+    <button class="fc-btn accept" id="fcAccept" type="button">Accept</button>
+  </div>
+  <div class="fc-live" id="fcLive" hidden>
+    <p id="fcTimer">00:00</p>
+    <p class="fc-script" id="fcScript"></p>
+    <button class="fc-btn decline" id="fcEnd" type="button">End</button>
+  </div>
+</div>
+
+<div id="strobe" class="strobe" hidden></div>
+<div id="toast" class="toast" hidden></div>
+
+<script src="js/store.js"></script>
+<script src="js/location.js"></script>
+<script src="js/alerts.js"></script>
+<script src="js/features.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
